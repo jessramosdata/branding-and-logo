@@ -1,0 +1,9 @@
+SELECT
+    'Jess Ramos' AS name,
+    'Big Data Energy' AS brand,
+    'Senior Data Analyst in Tech' AS background,
+    'Top Data and AI educator and media personality' AS about,
+    'Data & AI for enterprises' AS focus
+FROM creators
+WHERE curiosity IS NOT NULL
+  AND personality <> 'corporate default';
