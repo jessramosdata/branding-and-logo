@@ -1,0 +1,128 @@
+SELECT
+    'Jess Ramos' AS name,
+    'Big Data Energy' AS brand,
+    'Senior Data Analyst in Tech' AS background,
+    'Top Data and AI educator and media personality' AS about,
+    'Data & AI for enterprises' AS focus
+FROM creators
+WHERE curiosity IS NOT NULL
+  AND personality <> 'corporate default';
+
+
+SELECT
+    analytical_mind,
+    creative_instincts,
+    human_connection
+FROM big_data_energy
+WHERE personality IS NOT NULL
+LIMIT 0; -- Just kidding. No limits.
+
+
+SELECT
+    ai.*
+FROM ai_initiatives AS ai
+JOIN trusted_data AS data
+    ON ai.foundation_id = data.id
+WHERE data.quality = 'production ready';
+
+
+WITH good_questions AS (
+    SELECT
+        guest_id,
+        question,
+        topic,
+        ROW_NUMBER() OVER (
+            PARTITION BY guest_id
+            ORDER BY curiosity_factor DESC
+        ) AS question_priority
+    FROM interview_prep
+    WHERE topic IN ('Data', 'AI', 'Leadership')
+      AND question <> 'Can you introduce yourself?'
+)
+
+SELECT
+    leaders.name AS guest,
+    leaders.company,
+    questions.question,
+    interviews.fresh_perspectives,
+    interviews.human_moments,
+    'Jess Ramos' AS host
+FROM executive_interviews AS interviews
+JOIN tech_leaders AS leaders
+    ON interviews.guest_id = leaders.id
+JOIN good_questions AS questions
+    ON leaders.id = questions.guest_id
+WHERE questions.question_priority <= 3
+  AND interviews.depth > interviews.buzzwords
+ORDER BY interviews.curiosity_satisfied DESC;
+
+
+WITH reality_check AS (
+    SELECT
+        trend_id,
+        trend_name,
+        enterprise_relevance,
+        evidence_strength,
+        human_impact,
+        CASE
+            WHEN evidence_strength >= 8
+                THEN 'Worth your attention'
+            WHEN hype_score > evidence_strength
+                THEN 'Ask better questions'
+            ELSE 'Keep investigating'
+        END AS editorial_take
+    FROM data_and_ai_trends
+    WHERE source_verified = TRUE
+),
+
+jess_perspective AS (
+    SELECT
+        *,
+        DENSE_RANK() OVER (
+            ORDER BY
+                enterprise_relevance DESC,
+                human_impact DESC
+        ) AS coverage_priority
+    FROM reality_check
+    WHERE editorial_take <> 'Keep investigating'
+)
+
+SELECT
+    trend_name,
+    editorial_take,
+    'Senior Data Analyst in Tech' AS background,
+    'Educator & media personality' AS perspective,
+    'What does this mean for actual humans?' AS question
+FROM jess_perspective
+WHERE coverage_priority <= 5
+ORDER BY coverage_priority;
+
+
+WITH career_foundation AS (
+    SELECT
+        'Jess Ramos' AS name,
+        'Senior Data Analyst in Tech' AS background,
+        'Analytical thinking' AS superpower
+),
+
+next_chapter AS (
+    SELECT 'Data & AI educator' AS role
+    UNION ALL
+    SELECT 'Media personality'
+    UNION ALL
+    SELECT 'Executive interviewer'
+    UNION ALL
+    SELECT 'Keynote speaker'
+    UNION ALL
+    SELECT 'Entrepreneur'
+)
+
+SELECT
+    jess.name,
+    jess.background,
+    chapter.role,
+    jess.superpower,
+    'Big Data Energy' AS connecting_thread
+FROM career_foundation AS jess
+CROSS JOIN next_chapter AS chapter
+ORDER BY chapter.role;
